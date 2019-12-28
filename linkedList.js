@@ -53,7 +53,6 @@ linkedList
   .delete(4);
 
 // linkedList.head.next.next.next = linkedList.head;
-// linkedList.print(console.log);
 
 const linkedList2 = new LinkedList();
 linkedList2
@@ -68,8 +67,20 @@ linkedList3
   .add(1)
   .add(2)
   .add(3)
+  .add(4)
+  .add(5)
+  .add(6);
+
+const linkedList4 = new LinkedList();
+linkedList4
+  .add(1)
   .add(2)
-  .add(9);
+  .add(3)
+  .add(4)
+  .add(5)
+  .add(3)
+  .add(2)
+  .add(1);
 
 function isLooped(list) {
   if (!list) return null;
@@ -142,5 +153,79 @@ function reverseList(list) {
   return prev;
 }
 
+function isPalindrome3(list) {
+  const holdValues = [];
+  let curr = list.head;
+  while (curr) {
+    holdValues.push(curr.value);
+    curr = curr.next;
+  }
+  let left = 0;
+  let right = holdValues.length - 1;
+  while (left < right) {
+    if (holdValues[left] === holdValues[right]) {
+      left++;
+      right--;
+    } else if (holdValues[left] !== holdValues[right]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isPalindrome4(list) {
+  if(!list || !list.next){return true}
+  if(!list.next.next && list.value === list.next.value) {return true}
+  let curr = list.head;
+  let second = list.head;
+  let holdValues = [curr.value];
+  let even = true;
+  while (second.next && second.next.next) {
+    curr = curr.next;
+    holdValues.push(curr.value);
+    second = second.next.next;
+    even = !even;
+    if (second.next) {
+      even = !even;
+    }
+  }
+  let counter = holdValues.length - 1;
+  while (curr && curr.next) {
+    if (even) {
+      console.log('even')
+      if (holdValues[counter] !== curr.next.value) {
+        return false;
+      }
+    }
+    if (!even) {
+      console.log('odd')
+      console.log(counter, holdValues[counter], curr.value)
+      if (holdValues[counter] !== curr.value) {
+        return false;
+      }
+    }
+    curr = curr.next;
+    counter--;
+  }
+  if(!curr.next){return false}
+  return true;
+}
+
+const linkedList5 = new LinkedList();
+linkedList5
+  .add(1)
+  .add(2)
+  .add(3)
+  .add(2)
+  .add(1);
+
+const linkedList6 = new LinkedList();
+linkedList6
+  .add(1)
+  .add(2)
+  .add(1)
+  // .add(1);
+
 // console.log(isLooped(linkedList));
-console.log(isPalindrome2(linkedList2));
+// console.log(isPalindrome4(linkedList5)); //12321
+console.log(isPalindrome4(linkedList6)); //1221
