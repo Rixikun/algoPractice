@@ -30,31 +30,74 @@ Explanation:
 Because there are no blocked cells, it's possible to reach the target square.
 */
 
-var isEscapePossible = function(blocked, source, target) {};
+var isEscapePossible = function(
+  blocked,
+  source,
+  target //depth first search: if all adjacent cells are visited/blocked; escape route and go dive into parent's unvisited neighbors
+) {
+  const adjacent = { up: [], down: [], left: [], right: [] };
+  //stores current cell's adja blocked T/F
+  //up down left right
+  const isBlocked = {};
+  //create obj to hold Visited cells
+  const visited = {};
 
-const blocked = [
-  [0, 2],
-  [1, 1],
-  [1, 3],
-  [3, 1]
-];
-let adjacent = {
-  up: [0, 1],
-  down: [],
-  left: [],
-  right: [1, 0]
+  //func to check if cell is blocked
+  const checkBlocked = function(adja, blocked) {
+    Object.keys(adja).forEach(cDir => {
+      blocked.forEach(block => {
+        if (block[0] === adja[cDir][0] && block[1] === adja[cDir][1]) {
+          isBlocked[adja[cDir]] = true;
+        } else {
+          isBlocked[cDir] = false;
+        }
+      });
+    });
+  };
+
+  function checkAdja(currCell) {
+    if (!currCell) {
+      return null;
+    }
+    //else add visited cells to dict/memo/"visited" obj
+    //key would be X-coor
+    //val would be obj holding Y-coor as keys = True (if exist, otherwise that Y-coor simply doesnt exist as key)
+    visited[currCell[0]] = { ...currCell[0], [currCell[1]]: true };
+    //define adjacent cells based on current cell
+    adjacent.up = [currCell[0], currCell[1] + 1];
+    adjacent.down = [currCell[0], currCell[1] - 1];
+    adjacent.left = [currCell[0] - 1, currCell[1]];
+    adjacent.right = [currCell[0] + 1, currCell[1]];
+
+    for (const dir in adjacent) {
+      //if not visited & not blocked: recursion
+      if (!visited[dir] && checkBlocked(adjacent, blocked)[dir] === false) {
+        if (dir[0] === target[0] && dir[1] === target[1]) {
+          return true;
+        }
+        return checkAdja(dir);
+      }
+    }
+  }
+  checkAdja(source);
 };
 
-let isBlocked = {};
+// //small sample maze
+// const blocked = [
+//   [0, 2],
+//   [1, 1],
+//   [1, 3],
+//   [3, 1]
+// ];
 
-Object.keys(adjacent).forEach(cDir => {
-  blocked.forEach(block => {
-    if (block[0] === adjacent[cDir][0] && block[1] === adjacent[cDir][1]) {
-      isBlocked[adjacent[cDir]] = true;
-    } else {
-      isBlocked[cDir] = false;
-    }
-  });
-});
+// //sample: inital start's adjacency
+// const adjacent = {
+//   up: [0, 1],
+//   down: [],
+//   left: [],
+//   right: [1, 0]
+// };
 
-console.log(isBlocked);
+// checkBlocked(adjacent, blocked);
+
+// console.log(isBlocked);
