@@ -43,44 +43,56 @@ var isEscapePossible = function(
   const visited = {};
 
   //func to check if cell is blocked
-  const checkBlocked = function(adja, blocked) {
-    Object.keys(adja).forEach(cDir => {
-      blocked.forEach(block => {
-        if (block[0] === adja[cDir][0] && block[1] === adja[cDir][1]) {
-          isBlocked[adja[cDir]] = true;
-        } else {
-          isBlocked[cDir] = false;
-        }
-      });
-    });
+  const checkBlocked = function(curr, blocked) {
+    for (let i = 0; i < blocked.length; i++) {
+      if (blocked[i][0] === curr[0] && blocked[i][1] === curr[1]) {
+        return true;
+      }
+    }
+    return false;
   };
 
   function checkAdja(currCell) {
     if (!currCell) {
       return null;
     }
-    //else add visited cells to dict/memo/"visited" obj
-    //key would be X-coor
-    //val would be obj holding Y-coor as keys = True (if exist, otherwise that Y-coor simply doesnt exist as key)
-    visited[currCell[0]] = { ...currCell[0], [currCell[1]]: true };
-    //define adjacent cells based on current cell
-    adjacent.up = [currCell[0], currCell[1] + 1];
-    adjacent.down = [currCell[0], currCell[1] - 1];
-    adjacent.left = [currCell[0] - 1, currCell[1]];
-    adjacent.right = [currCell[0] + 1, currCell[1]];
+    if (
+      currCell[0] >= 0 ||
+      currCell[0] <= 5 ||
+      currCell[1] >= 0 ||
+      currCell[1] <= 5
+    ) {
+      //else add visited cells to dict/memo/"visited" obj
+      //key would be X-coor
+      //val would be obj holding Y-coor as keys = True (if exist, otherwise that Y-coor simply doesnt exist as key)
+      visited[currCell[0]] = { ...currCell[0], [currCell[1]]: true };
+      //define adjacent cells based on current cell
+      adjacent.up = [currCell[0], currCell[1] + 1];
+      adjacent.down = [currCell[0], currCell[1] - 1];
+      adjacent.left = [currCell[0] - 1, currCell[1]];
+      adjacent.right = [currCell[0] + 1, currCell[1]];
 
-    for (const dir in adjacent) {
-      //if not visited & not blocked: recursion
-      if (!visited[dir] && checkBlocked(adjacent, blocked)[dir] === false) {
-        if (dir[0] === target[0] && dir[1] === target[1]) {
-          return true;
+      for (const dir in adjacent) {
+        //if not visited & not blocked: recursion
+        console.log(checkBlocked(adjacent[dir], blocked));
+        // console.log("visit", visited);
+        // console.log(adjacent[dir]);
+        if (!visited[dir] && checkBlocked(adjacent[dir], blocked) === false) {
+          visited[adjacent[dir[0]]] = { ...visited, [adjacent[dir[1]]]: true };
+          if (dir[0] === target[0] && dir[1] === target[1]) {
+            return true;
+          }
+          //recurse each neighbor
+          checkAdja(adjacent[dir]);
         }
-        return checkAdja(dir);
       }
     }
   }
   checkAdja(source);
+  return false;
 };
+
+console.log(isEscapePossible([[]], [0, 0], [4, 4]));
 
 // //small sample maze
 // const blocked = [
@@ -97,7 +109,19 @@ var isEscapePossible = function(
 //   left: [],
 //   right: [1, 0]
 // };
+// const isBlocked = {};
 
+// const checkBlocked = function(adja, blocked) {
+//   return Object.keys(adja).map(cDir => {
+//     blocked.forEach(block => {
+//       if (block[0] === adja[cDir][0] && block[1] === adja[cDir][1]) {
+//         isBlocked[adja[cDir]] = true;
+//       } else {
+//         isBlocked[cDir] = false;
+//       }
+//     });
+//   });
+// };
 // checkBlocked(adjacent, blocked);
 
 // console.log(isBlocked);
