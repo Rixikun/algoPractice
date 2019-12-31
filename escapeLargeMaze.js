@@ -35,64 +35,79 @@ var isEscapePossible = function(
   source,
   target //depth first search: if all adjacent cells are visited/blocked; escape route and go dive into parent's unvisited neighbors
 ) {
-  const adjacent = { up: [], down: [], left: [], right: [] };
-  //stores current cell's adja blocked T/F
-  //up down left right
-  const isBlocked = {};
   //create obj to hold Visited cells
   const visited = {};
-
   //func to check if cell is blocked
+  const blockMemo = {};
+  blocked.forEach(block => (blockMemo[`${block[0]},${block[1]}`] = true));
   const checkBlocked = function(curr, blocked) {
-    for (let i = 0; i < blocked.length; i++) {
-      if (blocked[i][0] === curr[0] && blocked[i][1] === curr[1]) {
-        return true;
-      }
+    if (blockMemo[`${curr[0]},${curr[1]}`]) {
+      return true;
     }
     return false;
   };
 
   function checkAdja(currCell) {
+    const x = currCell[0];
+    const y = currCell[1];
+    const adjacent = {
+      up: [x, y + 1],
+      down: [x, y - 1],
+      left: [x - 1, y],
+      right: [x + 1, y]
+    };
     if (!currCell) {
       return null;
     }
-    if (
-      currCell[0] >= 0 ||
-      currCell[0] <= 5 ||
-      currCell[1] >= 0 ||
-      currCell[1] <= 5
-    ) {
+    visited[`${x},${y}`] = true;
+    if (x >= 0 && x <= 4 && y >= 0 && y <= 4) {
+      //if current cell = target, change result to true
+      if (x === target[0] && y === target[1]) {
+        // console.log("you found me!");
+        return true;
+      }
       //else add visited cells to dict/memo/"visited" obj
       //key would be X-coor
       //val would be obj holding Y-coor as keys = True (if exist, otherwise that Y-coor simply doesnt exist as key)
-      visited[currCell[0]] = { ...currCell[0], [currCell[1]]: true };
+      // visited[currCell[0]] = { ...currCell[0], [currCell[1]]: true };
       //define adjacent cells based on current cell
-      adjacent.up = [currCell[0], currCell[1] + 1];
-      adjacent.down = [currCell[0], currCell[1] - 1];
-      adjacent.left = [currCell[0] - 1, currCell[1]];
-      adjacent.right = [currCell[0] + 1, currCell[1]];
-
       for (const dir in adjacent) {
-        //if not visited & not blocked: recursion
-        console.log(checkBlocked(adjacent[dir], blocked));
-        // console.log("visit", visited);
-        // console.log(adjacent[dir]);
-        if (!visited[dir] && checkBlocked(adjacent[dir], blocked) === false) {
-          visited[adjacent[dir[0]]] = { ...visited, [adjacent[dir[1]]]: true };
-          if (dir[0] === target[0] && dir[1] === target[1]) {
-            return true;
+        // console.log("currCell: ", currCell, `adjacent: ${dir} `, adjacent);
+        if (
+          adjacent[dir][0] >= 0 &&
+          adjacent[dir][0] <= 4 &&
+          adjacent[dir][1] >= 0 &&
+          adjacent[dir][1] <= 4
+        ) {
+          let visitKey = `${adjacent[dir][0]},${adjacent[dir][1]}`;
+          //if not visited & not blocked: recursion
+          if (
+            !visited[visitKey] &&
+            checkBlocked(adjacent[dir], blocked) === false
+          ) {
+            // console.log("visit", visited);
+            if (checkAdja(adjacent[dir])) {
+              return true;
+            }
           }
-          //recurse each neighbor
-          checkAdja(adjacent[dir]);
         }
       }
     }
+    return false;
   }
   checkAdja(source);
-  return false;
 };
 
-console.log(isEscapePossible([[]], [0, 0], [4, 4]));
+let trapped = [
+  [2, 0],
+  [2, 1],
+  [2, 2],
+  [2, 3],
+  [2, 4]
+];
+let noBlocks = [[]];
+console.log(isEscapePossible(noBlocks, [0, 0], [4, 4])); //true
+console.log(isEscapePossible(trapped, [0, 0], [4, 4])); //false
 
 // //small sample maze
 // const blocked = [
@@ -125,3 +140,60 @@ console.log(isEscapePossible([[]], [0, 0], [4, 4]));
 // checkBlocked(adjacent, blocked);
 
 // console.log(isBlocked);
+
+/* for clear view
+
+
+var isEscapePossible = function(
+  blocked,
+  source,
+  target
+) {
+  let result = false;
+  const visited = {};
+  const blockMemo = {}
+  blocked.forEach(block => blockMemo[`${block[0]},${block[1]}`] = true)
+  const checkBlocked = function(curr, blocked) {
+    if(blockMemo[`${curr[0]},${curr[1]}`]) {return true}
+    return false;
+  };
+
+  function checkAdja(currCell) {
+    const x = currCell[0]
+    const y = currCell[1]
+    const adjacent = { up: [x, y + 1], down: [x, y - 1], left: [x - 1, y], right: [x + 1, y] };
+    if (!currCell) {
+      return null;
+    }
+    visited[`${x},${y}`] = true;
+    if (
+      x >= 0 &&
+      x <= 4 &&
+      y >= 0 &&
+      y <= 4
+    ) {
+      if (x === target[0] && y === target[1]) {
+        return true
+      }
+      for (const dir in adjacent) {
+        if (
+          adjacent[dir][0] >= 0 &&
+          adjacent[dir][0] <= 4 &&
+          adjacent[dir][1] >= 0 &&
+          adjacent[dir][1] <= 4
+        ) {
+          let visitKey = `${adjacent[dir][0]},${adjacent[dir][1]}`;
+          if (
+            !visited[visitKey] &&
+            checkBlocked(adjacent[dir], blocked) === false
+          ) {
+             if(checkAdja(adjacent[dir])){return true}
+          }
+        }
+      }
+    }
+    return false
+  }
+  return checkAdja(source);
+};
+*/
