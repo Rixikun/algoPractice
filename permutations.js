@@ -6,18 +6,22 @@ Sample output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]
 */
 
 function getPermutations(arr) {
-  const result = [];
   if (!arr.length) {
     return [];
   }
-  for (let i = 0; i < arr.length; i++) {
-    let remaining =
-      i > 0 ? arr.slice(i + 1).concat(arr.slice(0, i)) : arr.slice(i + 1);
-    console.log("curr", arr[i], "remaining: ", remaining);
-    // result.push([arr[i]].concat(getPermutations(remaining)));
-    // console.log(result);
+  const result = [];
+  function helper(permArr, arr) {
+    // console.log("perm", permArr);
+    if (!arr.length) {
+      result.push(permArr);
+    }
+    for (let i = 0; i < arr.length; i++) {
+      let remaining = arr.slice(0, i).concat(arr.slice(i + 1));
+      let oneCombo = permArr.concat([arr[i]]);
+      helper(oneCombo, remaining);
+    }
   }
-  // console.log(result);
+  helper([], arr);
   return result;
 }
 
