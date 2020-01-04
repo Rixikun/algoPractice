@@ -4,37 +4,47 @@ Write a function that takes in three strings and returns a boolean representing 
 Sample input: "algoexpert", "your-dream-job", "your-algodream-expertjob" // true
 */
 
-function interweavingStrings(one, two, target) {
-  const charPool = (one + two).toLowerCase();
-  console.log(charPool);
-  const targetDict = {};
-  target
-    .toLowerCase()
-    .split("")
-    .forEach(char => {
-      if (!targetDict[char]) {
-        targetDict[char] = 1;
-      } else {
-        targetDict[char]++;
-      }
-    });
-  for (let i = 0; i < charPool.length; i++) {
-    console.log(targetDict);
-    if (targetDict[charPool[i]]) {
-      targetDict[charPool[i]]--;
-    } else if (!targetDict[charPool[i]] || targetDict[charPool[i]] < 0) {
+function interweavingStrings(x, y, target) {
+  //base cases:
+  if (!x.length && !y.length && !target.length) {
+    return true;
+  }
+  if (!target.length && (x.length || y.length)) {
+    return false;
+  }
+  if (target.length && (x.length || y.length)) {
+    if (x[0] !== target[0]) {
+      return false;
+    } else if (y[0] !== target[0]) {
       return false;
     }
   }
-  return true;
+  //recursive case x:
+  if (
+    target.length &&
+    x.length &&
+    interweavingStrings(x.slice(1), y, target.slice(1)) === true
+  ) {
+    if (x[0] === target[0]) {
+      return true;
+    }
+    interweavingStrings(x.slice(1), y, target.slice(1));
+  }
+  //recursive case y:
+  if (target.length && y.length) {
+    if (y[0] === target[0]) {
+      return true;
+    }
+    interweavingStrings(x, y.slice(1), target.slice(1));
+  }
+  return false;
 }
 
 /*
-input 3 strings, 1 & 2 must be able to produce 3
-output true/false
-non alphanumeric seems ok
-basically param1 & param2 can be just 1 big param if combined, just a char pool
-so given 1 large string, can it be permutated to form the 3rd string?
-iterate thru the target, see if the char exists in the char pool
+going in order for one&two, create target as a possibility
+have a new string as a result
+place chars from one / two into indexes of result 'in order'
+the first char of either string has to be str1.len||str2.len -1 length apart
+target[0] should match one[0] || two[0] else {false}
 */
-console.log(interweavingStrings("Hi", "Bye", "hibYE"));
+console.log(interweavingStrings("abc", "123", "ayz789"));
