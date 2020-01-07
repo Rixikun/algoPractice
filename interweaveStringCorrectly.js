@@ -6,37 +6,31 @@ Sample input: "algoexpert", "your-dream-job", "your-algodream-expertjob" // true
 
 function interweavingStrings(x, y, target) {
   //base cases:
+  //all empty, good
   if (!x.length && !y.length && !target.length) {
     return true;
   }
+  //target finished but left over char
   if (!target.length && (x.length || y.length)) {
     return false;
   }
-  if (target.length && (x.length || y.length)) {
-    if (x[0] !== target[0]) {
-      return false;
-    } else if (y[0] !== target[0]) {
-      return false;
-    }
-  }
   //recursive case x:
   if (
-    target.length &&
     x.length &&
+    x[0] === target[0] &&
     interweavingStrings(x.slice(1), y, target.slice(1)) === true
   ) {
-    if (x[0] === target[0]) {
-      return true;
-    }
-    interweavingStrings(x.slice(1), y, target.slice(1));
+    return true;
   }
-  //recursive case y:
-  if (target.length && y.length) {
-    if (y[0] === target[0]) {
-      return true;
-    }
-    interweavingStrings(x, y.slice(1), target.slice(1));
+  //if x falsey -> recursive case y:
+  if (
+    y.length &&
+    y[0] === target[0] &&
+    interweavingStrings(x, y.slice(1), target.slice(1)) === true
+  ) {
+    return true;
   }
+  //nothing good?
   return false;
 }
 
@@ -47,4 +41,6 @@ place chars from one / two into indexes of result 'in order'
 the first char of either string has to be str1.len||str2.len -1 length apart
 target[0] should match one[0] || two[0] else {false}
 */
+console.log(interweavingStrings("abc", "123", "abc123"));
+
 console.log(interweavingStrings("abc", "123", "ayz789"));
