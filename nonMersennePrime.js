@@ -6,22 +6,29 @@ However, in 2004 there was found a massive non-Mersenne prime which contains 2,3
 Find the last ten digits of this prime number.
 */
 
-// return 28433n * 2n ** 7830457n + 1n;
+// primeNum = 28433n * 2n ** 7830457n + 1n;
+// num % 10,000,000,000 to get last 10 dig
+// n**(a+b) === n**a * n**b
+// if b === 2a then n**b === n**a * n**a
+
+let powMod = (a, n, p) => {
+  //base 0||1
+  if (n === 0n) {
+    return 1n;
+  } else {
+    let x = powMod(a, n / 2n, p);
+    //p is last 10 dig
+    //account if 'n' is odd (then multiply once more); otherwise do nothing
+    return (x * x * (n % 2n === 1n ? a : 1n)) % p;
+  }
+};
+
 function nonMP() {
-  // num % 10000000000
+  //the 10 digits remainder, aka last 10 dig
+  let x = 10n ** 10n;
+  return (28433n * powMod(2n, 7830457n, x) + 1n) % x;
 }
+
+//multiplication of 2 static ndigit ending will result in the same ndigit num
 
 console.log(nonMP());
-
-/*
-function addmod(a, b, n) {
-  //base case: b = 0 / 1
-  if (b == 0n) {
-    return 0n;
-  }
-  if (b == 1n) {
-    return a;
-  }
-  return (addmod(a, b / 2n + 1n, n) + addmod(a, b / 2n, n)) % n;
-}
-*/

@@ -6,8 +6,7 @@ What is the smallest positive number that is evenly divisible by all of the numb
 */
 //3628800
 
-function smallestM() {
-  let num = 3628800;
+function smallestM(num = 3628800) {
   if (num <= 210) {
     return "hi";
   }
