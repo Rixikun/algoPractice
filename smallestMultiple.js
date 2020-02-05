@@ -6,17 +6,34 @@ What is the smallest positive number that is evenly divisible by all of the numb
 */
 //3628800
 
-function smallestM(num = 3628800) {
-  if (num <= 210) {
-    return "hi";
-  }
-  for (let i = 10; i > 0; i--) {
+function factorsOf20(num) {
+  let factors = []
+  for (let i = 2; i <= 20; i++) {
     if (num % i !== 0) {
-      return `false ${num}`;
+      return false
     }
+    factors.push(i)
   }
-  console.log(`ok ${num}`);
-  smallestM(num / 10);
+  return true
 }
 
-console.log(smallestM());
+
+function isFactor(num) {
+    for (let i = 3; i * i <= num; i++) {
+      if (num % i === 0) {
+        return i;
+      }
+    }
+}
+
+const smallestM =()=> {
+   let flag = false
+  for(let i = 4; flag === false; i++) {
+    if(factorsOf20(i) === true) {
+      flag = true
+      return i
+    }
+  }
+}
+
+console.log(smallestM())
