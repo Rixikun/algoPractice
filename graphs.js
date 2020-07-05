@@ -12,10 +12,10 @@ const graph = {
   b: [],
   c: ["d", "e"],
   d: ["e"],
-  e: []
+  e: [],
 };
 
-const visitedObj = list => {
+const visitedObj = (list) => {
   const obj = {};
   for (const key of Object.keys(list)) {
     obj[key] = false;
