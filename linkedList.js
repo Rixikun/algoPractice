@@ -229,3 +229,187 @@ linkedList6
 // console.log(isLooped(linkedList));
 // console.log(isPalindrome4(linkedList5)); //12321
 console.log(isPalindrome4(linkedList6)); //1221
+
+
+
+////////////////////////////////////////////////////////////
+
+/* LinkedList */
+
+function LinkedList() { 
+  var length = 0; 
+  var head = null; 
+
+  var Node = function(element){
+    this.element = element; 
+    this.next = null; 
+  }; 
+
+  this.size = function(){
+    return length
+  };
+
+  this.head = function(){
+    return head
+  };
+
+  this.add = function(element){
+   if(head === null) {
+     head = new Node(element)
+   } else {
+     let curr = head
+     while(curr.next){
+       curr = curr.next
+     }
+     curr.next = new Node(element)
+   }
+   length++;
+  }; 
+
+  this.remove = function(element){
+    let curr = head;
+    let prev;
+    if(curr.element === element) {
+      head = curr.next
+    } else {
+      while(curr.element !== element){
+        prev = curr;
+        curr = curr.next;
+      }
+      prev.next = curr.next
+    }
+    length--;
+  };
+  
+  this.isEmpty = function() {
+    return length === 0
+  };
+
+  this.indexOf = function(element) {
+    let idx = -1;
+    let curr = head
+    while(curr){
+      idx++;
+      if(curr.element === element) return idx;
+      curr = curr.next
+    }
+    return -1
+  };
+
+  this.elementAt = function(index) {
+   let count = 0;
+   let curr = head;
+   while(count < index){
+     count++;
+     curr = curr.next
+   }
+   return curr.element;
+  };
+  
+  
+  this.addAt = function(index, element){
+   if(index > length) return false;
+   let count = 0;
+   let curr = head;
+   let prev = curr;
+   while (count < index) {
+     prev = curr;
+     curr = curr.next;
+     count++;
+   }
+    let added = new Node(element)
+    prev.next = added
+    added.next = curr
+    length++;
+  }
+  
+  this.removeAt = function(index) {
+   if(index > length || index <= 0) return null;
+   let count = 0;
+   let curr = head;
+   let prev = curr;
+   if(index === 0) {
+     head = curr.next
+   } else {
+    while (count < index) {
+      prev = curr;
+      curr = curr.next;
+      count++;
+    }
+    prev.next = curr.next
+    }
+    length--;
+    return curr.element
+  }
+} 
+
+
+
+///////////////
+
+var deleteDuplicates = function(head) {
+  if(!head) return null;
+  let prev = head;
+  let curr = head.next;
+  while(curr) {
+    if(prev.val === curr.val){
+      prev.next = curr.next
+    } else {
+      prev = curr
+    }
+    curr = curr.next
+  }
+  return head
+};
+
+const head = new ListNode(1,new ListNode(1, new ListNode(2)))
+const head2 = new ListNode(1,new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(3)))))
+
+console.log(deleteDuplicates(head2))
+
+
+
+/////////////////////////
+
+function fullSum(nodeA, nodeB){
+  let currA = reverseList(nodeA)
+  let currB = reverseList(nodeB)
+  let res = new ListNode()
+  let currRes = res
+
+  let carryOne = false
+  while(currA || currB){
+    let a = currA ? currA.val : 0
+    let b = currB ? currB.val : 0
+    let sum = carryOne ? 1 + a + b : a + b
+    carryOne = false
+    if(sum > 9){
+      sum -= 10
+      carryOne = true
+    }
+    
+    currRes.val = sum
+
+    if(currA) {
+      currA = currA.next
+    }
+    if(currB) {
+      currB = currB.next
+    }
+    currRes.next = new ListNode()
+    currRes = currRes.next
+  }
+
+  if(carryOne) currRes.val = 1
+
+  return reverseList(res)
+}
+
+
+
+const a = new ListNode(9, new ListNode(8, new ListNode(1)))
+const b = new ListNode(6, new ListNode(7))
+const c = new ListNode(9, new ListNode(8))
+const d = new ListNode(6, new ListNode(7))
+
+console.log(fullSum(a, b)) // 1-0-4-8
